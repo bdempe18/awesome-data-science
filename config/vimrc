@@ -1,1 +1,109 @@
-../../.vimrc
+call plug#begin('~/.vim/plugged')
+Plug 'crusoexia/vim-monokai'
+Plug 'itchyny/lightline.vim'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'tpope/vim-surround'
+Plug 'vim-scripts/indentpython.vim'
+Plug 'vim-syntastic/syntastic'
+Plug 'herringtondarkholme/yats.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'mattn/emmet-vim'
+Plug 'luochen1990/rainbow'
+Plug 'jpalardy/vim-slime'
+Plug 'JuliaEditorSupport/julia-vim'
+call plug#end()
+
+syntax enable
+
+filetype indent on
+set autoindent
+
+inoremap jj <ESC>
+
+colorscheme monokai
+set background=dark
+let g:rainbow_active = 0
+let g:yats_host_keyword = 1
+set re=1
+set t_Co=256
+
+" KITE
+" %{kite#statusline()}
+let g:kite_auto_complete=1
+
+set laststatus=2
+let g:lightline = {
+      \ 'colorscheme': 'jellybeans',
+      \ }
+
+hi SpellBad ctermfg=red guifg=red
+hi SpellCap ctermfg=blue guifg=blue
+hi SpellLocal ctermfg=green guifg=green
+hi SpellRare ctermfg=green guifg=green
+
+" Split screen indentions
+nnoremap <C-K> <C-W><C-J>
+nnoremap <C-I> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+nnoremap <leader>W <leader>w
+
+" Nerd Tree
+nnoremap <F6> :NERDTreeToggle<CR>
+
+
+
+set mouse=a
+
+" Enables folding
+set foldmethod=indent
+set foldlevel =99
+nnoremap <space> za
+set nu
+
+au BufNewFile,BufRead *.php
+	\ set tabstop=4 |
+	\ set shiftwidth=4 |
+	\ set autoindent |
+	\set textwidth=79
+
+au BufNewFile,BufRead *.html,*.css
+	\ set tabstop=2 |
+	\ set softtabstop=2 |
+	\ set shiftwidth=2
+
+" PEP 8 
+au BufNewFile,BufRead *.py
+	\ set tabstop=4 |
+	\ set softtabstop=4 |
+	\ set shiftwidth=4 |
+	\ set textwidth=79 |
+	\ set expandtab |
+	\ set autoindent |
+	\ set fileformat=unix |
+	\ set number
+
+" Latex preferences
+au BufNewFile,BufRead *.tex,*.md
+	\ set spell
+
+" Julia preferences
+au BufNewFile,BufRead *.jl
+	\ set tabstop=4 |
+	\ set softtabstop=4 |
+	\ set shiftwidth=4 |
+	\ set textwidth=79 |
+	\ set expandtab |
+	\ set autoindent |
+	\ set number
+ 
+" R preferences
+au BufNewFile,BufRead *.R
+	\ set tabstop=2 |
+	\ set softtabstop=2 |
+	\ set autoindent |
+	\ set textwidth=80
+
+" HTML tag generation
+let g:user_emmet_leader_key=','
