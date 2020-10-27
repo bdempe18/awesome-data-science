@@ -1,45 +1,89 @@
+" heavily based on https://github.com/JJGO/dotfiles/blob/master/vim/.vimrc
+
+" =============================================================================
+" PLUGINS
+" =============================================================================
 call plug#begin('~/.vim/plugged')
+" Color schemes are GUI
 Plug 'crusoexia/vim-monokai'
 Plug 'itchyny/lightline.vim'
+Plug 'scrooloose/nerdtree'
+
+" search
+Plug 'haya14busa/incsearch.vim'		    " better incremental search
+
+" Misc
 Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-surround'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'herringtondarkholme/yats.vim'
-Plug 'scrooloose/nerdtree'
 Plug 'mattn/emmet-vim'
-Plug 'luochen1990/rainbow'
 Plug 'jpalardy/vim-slime'
 Plug 'JuliaEditorSupport/julia-vim'
+Plug 'AlessandroYorba/Alduin'
+
+" text manipulation
+Plug 'joom/vim-commentary'              " easy commenting
+Plug 'foosoft/vim-argwrap'              " func arg alignment
+Plug 'junegunn/vim-easy-align'          " alignment 
+Plug 'godlygeek/tabular'                " align on char
+
+" git
+Plug 'airblade/vim-gitgutter'		    " Git gutter
+Plug 'tpope/vim-fugitive'		        " Git interface 
+Plug 'xuyuanp/nerdtree-git-plugin'    	" Show status of files in NerdTree
+Plug 'tveskag/nvim-blame-line'        	" Add git blame on line
+Plug 'kshenoy/vim-signature'		    " show marks in the gutter
+
+" synaticatic language support
+Plug 'mechatroner/rainbow_csv'         	" CSV color coding
+Plug 'vim-python/python-syntax'
+Plug 'stephpy/vim-yaml'			        " YAML support
+Plug 'lervag/vimtex'			        " LATEX support
+
+" writing
+Plug 'rhysd/vim-grammarous'             " grammar check with LanguageTool
+Plug 'junegunn/limelight.vim'           " focus on current paragraph
+
+" general utils
+Plug 'Wakatime/vim-wakatime'            " Productivity tracker
+Plug 'wikitopian/hardmode'              " No more crutches!
 call plug#end()
 
-syntax enable
+" =============================================================================
+" EDITOR SETTINGS
+" =============================================================================
 
-filetype indent on
+" colorscheme
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:alduin_Shout_Become_Ethereal = 1
+colorscheme alduin 
+
+set t_Co=256
+let g:python_highlight_all = 1
+syntax on
+
+" spaces and tabs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set textwidth=79
+set expandtab
 set autoindent
 
-inoremap jj <ESC>
-
-colorscheme monokai
-set background=dark
-let g:rainbow_active = 0
-let g:yats_host_keyword = 1
-set re=1
-set t_Co=256
-
-" KITE
-" %{kite#statusline()}
-let g:kite_auto_complete=1
-
-set laststatus=2
-let g:lightline = {
-      \ 'colorscheme': 'jellybeans',
-      \ }
-
-hi SpellBad ctermfg=red guifg=red
-hi SpellCap ctermfg=blue guifg=blue
-hi SpellLocal ctermfg=green guifg=green
-hi SpellRare ctermfg=green guifg=green
+" UI config
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set number
+" set relativenumber
+filetype indent on			            " load filetype=epecific indent files
+filetype plugin on			            " load filetype specific plugin files
+set showmatch				            " highlight matching [{()}]
+set laststatus=2			            " show status line at bottom of screen
+set noerrorbells visualbell t_vb=	    " noises are annoying		
+set scrolloff=12
+set ttyfast
 
 " Split screen indentions
 nnoremap <C-K> <C-W><C-J>
@@ -47,63 +91,200 @@ nnoremap <C-I> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-nnoremap <leader>W <leader>w
+" misc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set backspace=indent,eol,start		    " backspace behaves as expected
+" no Ex mode nonsense on Q
+nmap Q <Nop>				
+set re=1				                " not sure what this does
 
-" Nerd Tree
+" searching
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set incsearch				            " search as characters as entered	
+set hlsearch
+set ignorecase				            " ignores case sensitive	
+set smartcase				            " ... unless uppercase is entered	
+
+" turn off search highlight
+vnoremap <C-h> :nohlsearch<cr>		
+nnoremap <C-h> :nohlsearch<cr>
+set wildignore+=*/.git/*,*/tmp/,*.swp	" ignore files for completion
+
+" highlighting
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" highlight color for spelling errors depends on error type
+hi SpellBad ctermfg=red guifg=red
+hi SpellCap ctermfg=blue guifg=blue
+hi SpellLocal ctermfg=green guifg=green
+hi SpellRare ctermfg=green guifg=green
+
+" adds words that should be highlighted when commented
+augroup vimrc_todo
+    au!
+    au Syntax * syn match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|HACK)/
+          \ containedin=.*Comment,vimCommentTitle
+augroup END
+hi def link MyTodo Todo
+" Undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set undofile				            " maintain undo hist btwn sessions
+set undodir=~/.vim/undodir
+
+
+" Folding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set foldenable				            " enable folding
+set foldlevelstart=10			        " opens most folds by default
+set foldnestmax=10			            " 10 nexted fold max
+"space opens/closes folds
+nnoremap <space> za
+set foldmethod=indent			        " fold based on indent level	
+" good for python. Other options include (marker, manual, expr, syntax, diff)
+
+
+" Movement
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" highlight the last inserted text
+nnoremap gV `[v`[
+
+" (Shift) Tab (de)ndents code
+vnoremap <Tab> >
+vnoremap <S-Tab> <
+
+" =============================================================================
+" CUSTOM FUNCTIONS
+" =============================================================================
+
+" filestype specific full line comment
+function! CommentRow() 
+	if &filetype=="php"
+		execute "normal! ^i//  ==========================================================================="
+	elseif &filetype=="py"
+		execute "normal! ^i#  ============================================================================"
+	endif	
+endfunction
+
+" toggle between number and relativenumber
+function! ToggleLineNumber()
+    if(&relativenumber == 1)
+        set norelativenumber
+        set number
+    else
+        set relativenumber
+    endif
+endfunc
+
+function! LightlineFilename()
+    return expand('%:t') !=# '' ? @% : '[No Name]'
+endfunction    
+
+" php test expression
+nnoremap <F1> ^iecho "<pre>"; print_r(<esc>A); die();<esc> 
+nnoremap <F8> :call CommentRow()<CR>			
+nnoremap <F5> :call ToggleLineNumber()<cr>
+" =============================================================================
+" PLUGIN CONFIG
+" =============================================================================
+
+let g:user_emmet_leader_key=','		    " emmet 
+let g:gitgutter_enabled = 1 		    " vim-git-gutter
+let g:SignatureEnabledAtStartup = 1
+let g:tex_flavor = "latex"
+" hardmode
+autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
+
+" NERD tree git
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'✹',
+                \ 'Staged'    :'✚',
+                \ 'Untracked' :'✭',
+                \ 'Renamed'   :'➜',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'✖',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }
+
+
+" KITE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" %{kite#statusline()}
+let g:kite_auto_complete=1
+
+nnoremap ,<space> :nohlsearch<CR>
+
+" LIGHTLINE
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:lightline = {
+    \     'colorscheme': 'wombat', 
+    \     'active': {
+    \        'left':  [ ['mode', 'paste' ],
+    \                   ['gitbranch', 'readonly', 'filename', 'modified' ]],
+    \        'right': [ ['syntastic', 'lineinfo' ],
+    \                   ['percent'] ]
+    \               },
+    \       'component_function': {
+    \           'filename': 'LightlineFilename',
+    \           'gitbranch': 'FugitiveHead'
+    \        },
+    \       'component_expand': {
+    \           'syntastic': 'SyntasticStatuslineFlag',
+    \       },
+    \       'component_type': {
+    \           'syntastic': 'error',
+    \       }
+    \ }
+
+function! SyntasticCheckHook(errors)
+    call lightline#update()
+endfunction
+
+
+set noshowmode          				
+
+" =============================================================================
+" CUSTOM SHORTCUTS
+" =============================================================================
+
+let mapleader="jj"
+inoremap jj <ESC>
 nnoremap <F6> :NERDTreeToggle<CR>
 
+" git gutter
+nmap ghs <Plug>(GitGutterStageHunk)
+nmap ghu <Plug>(GitGutterUndoHunk)
+nmap ghp <Plug>(GitGutterPreviewHunk)
 
-
-set mouse=a
-
-" Enables folding
-set foldmethod=indent
-set foldlevel =99
-nnoremap <space> za
-set nu
-
-au BufNewFile,BufRead *.php
-	\ set tabstop=4 |
-	\ set shiftwidth=4 |
-	\ set autoindent |
-	\set textwidth=79
+ 
+" =============================================================================
+" FILETYPE SPECIFIC CUSTOMIZATIONS
+" =============================================================================
+" Help filetype detection
+autocmd BufRead *.plot set filetype=gnuplot
+autocmd BufRead *.md set filetype=markdown
+autocmd BufRead *.tex set filetype=tex
+autocmd BufRead *.php set filetype=php
 
 au BufNewFile,BufRead *.html,*.css
 	\ set tabstop=2 |
 	\ set softtabstop=2 |
 	\ set shiftwidth=2
 
-" PEP 8 
-au BufNewFile,BufRead *.py
-	\ set tabstop=4 |
-	\ set softtabstop=4 |
-	\ set shiftwidth=4 |
-	\ set textwidth=79 |
-	\ set expandtab |
-	\ set autoindent |
-	\ set fileformat=unix |
-	\ set number
-
 " Latex preferences
 au BufNewFile,BufRead *.tex,*.md
 	\ set spell
 
-" Julia preferences
-au BufNewFile,BufRead *.jl
-	\ set tabstop=4 |
-	\ set softtabstop=4 |
-	\ set shiftwidth=4 |
-	\ set textwidth=79 |
-	\ set expandtab |
-	\ set autoindent |
-	\ set number
- 
 " R preferences
 au BufNewFile,BufRead *.R
 	\ set tabstop=2 |
 	\ set softtabstop=2 |
-	\ set autoindent |
-	\ set textwidth=80
+	\ set textwidth=79
 
-" HTML tag generation
-let g:user_emmet_leader_key=','
+" jump to last location on opening file
+if has("autocmd")
+  " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
+  au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
