@@ -1,11 +1,18 @@
 " heavily based on https://github.com/JJGO/dotfiles/blob/master/vim/.vimrc
 
+" ME
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+iabbrev @@ dempeb18@gmail.com
+iabbrev @! Ben Dempe
+iabbrev @g bdempe18                      
+
 " =============================================================================
 " PLUGINS
 " =============================================================================
 call plug#begin('~/.vim/plugged')
 " Color schemes are GUI
 Plug 'crusoexia/vim-monokai'
+Plug 'jaredgorski/spacecamp'
 Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
 
@@ -41,6 +48,7 @@ Plug 'mechatroner/rainbow_csv'         	" CSV color coding
 Plug 'vim-python/python-syntax'
 Plug 'stephpy/vim-yaml'			        " YAML support
 Plug 'lervag/vimtex'			        " LATEX support
+Plug 'plasticboy/vim-markdown'          " Markdown support
 
 " writing
 Plug 'rhysd/vim-grammarous'             " grammar check with LanguageTool
@@ -58,7 +66,7 @@ call plug#end()
 " colorscheme
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:alduin_Shout_Become_Ethereal = 1
-colorscheme alduin 
+colorscheme spacecamp 
 
 set t_Co=256
 let g:python_highlight_all = 1
@@ -72,6 +80,7 @@ set shiftwidth=4
 set textwidth=79
 set expandtab
 set autoindent
+set smartindent
 
 " UI config
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -249,7 +258,7 @@ set noshowmode
 " CUSTOM SHORTCUTS
 " =============================================================================
 
-let mapleader="jj"
+let mapleader=","
 inoremap jj <ESC>
 nnoremap <F6> :NERDTreeToggle<CR>
 
@@ -268,17 +277,12 @@ autocmd BufRead *.md set filetype=markdown
 autocmd BufRead *.tex set filetype=tex
 autocmd BufRead *.php set filetype=php
 
-au BufNewFile,BufRead *.html,*.css
-	\ set tabstop=2 |
-	\ set softtabstop=2 |
-	\ set shiftwidth=2
-
 " Latex preferences
 au BufNewFile,BufRead *.tex,*.md
 	\ set spell
 
 " R preferences
-au BufNewFile,BufRead *.R
+au BufNewFile,BufRead *.R,*.md,*.html,*.css
 	\ set tabstop=2 |
 	\ set softtabstop=2 |
 	\ set textwidth=79
