@@ -134,7 +134,7 @@ set undodir=~/.vim/undodir
 " Folding
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set foldenable				            " enable folding
-set foldlevelstart=10			        " opens most folds by default
+set foldlevelstart=3			        " opens most folds by default
 set foldnestmax=10			            " 10 nexted fold max
 "space opens/closes folds
 nnoremap <space> za
@@ -249,7 +249,7 @@ set noshowmode
 " CUSTOM SHORTCUTS
 " =============================================================================
 
-let mapleader="jj"
+let mapleader=" "
 inoremap jj <ESC>
 nnoremap <F6> :NERDTreeToggle<CR>
 
@@ -288,3 +288,10 @@ if has("autocmd")
   " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
   au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
+
+
+" =============================================================================
+" MY MAPPINGS
+" =============================================================================
+" appends a semi colon at the end of line (thx Vim the hard way)
+nnoremap <leader>; mqA;\<esc>`q"
