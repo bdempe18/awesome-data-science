@@ -13,3 +13,9 @@ Library of statistics, data science, and programming resources as well as local 
   ``` console
   grep -rl <str> <dir/.> | xargs sed -i 's/<str>/<replaced str>/g' 
   ```
+### Functional Programming
+  - [Imperative vs Declarative Programming](https://ui.dev/imperative-vs-declarative-programming/)
+  - O'Reilly's Function Programming in Python by David Mertz
+  
+## Code Quality
+  - [Python Antipatterns](https://docs.quantifiedcode.com/python-anti-patterns/)
