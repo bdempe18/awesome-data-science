@@ -4,17 +4,22 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 iabbrev @@ dempeb18@gmail.com
 iabbrev @! Ben Dempe
-iabbrev @g bdempe18                      
+iabbrev @g bdempe18
+
+" shortcuts
+iabbrev clog console.log
 
 " =============================================================================
 " PLUGINS
 " =============================================================================
 call plug#begin('~/.vim/plugged')
 " Color schemes are GUI
+Plug  '~/data-science-awesome/bentastic'
 Plug 'crusoexia/vim-monokai'
 Plug 'jaredgorski/spacecamp'
 Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'AlessandroYorba/Alduin'
 
 " search
 Plug 'haya14busa/incsearch.vim'		    " better incremental search
@@ -27,28 +32,31 @@ Plug 'vim-syntastic/syntastic'
 Plug 'herringtondarkholme/yats.vim'
 Plug 'mattn/emmet-vim'
 Plug 'jpalardy/vim-slime'
-Plug 'JuliaEditorSupport/julia-vim'
-Plug 'AlessandroYorba/Alduin'
+Plug 'mhinz/vim-startify'               " Better start screen
 
 " text manipulation
 Plug 'joom/vim-commentary'              " easy commenting
 Plug 'foosoft/vim-argwrap'              " func arg alignment
-Plug 'junegunn/vim-easy-align'          " alignment 
+Plug 'junegunn/vim-easy-align'          " alignment
 Plug 'godlygeek/tabular'                " align on char
+Plug 'tpope/vim-abolish'                " change case/robust abbrevs
 
 " git
 Plug 'airblade/vim-gitgutter'		    " Git gutter
-Plug 'tpope/vim-fugitive'		        " Git interface 
+Plug 'tpope/vim-fugitive'		        " Git interface
 Plug 'xuyuanp/nerdtree-git-plugin'    	" Show status of files in NerdTree
 Plug 'tveskag/nvim-blame-line'        	" Add git blame on line
 Plug 'kshenoy/vim-signature'		    " show marks in the gutter
 
 " synaticatic language support
+Plug 'w0rp/ale'                        " Linting engine
+Plug 'maximbaz/lightline-ale'          " Lightline + Ale
 Plug 'mechatroner/rainbow_csv'         	" CSV color coding
 Plug 'vim-python/python-syntax'
 Plug 'stephpy/vim-yaml'			        " YAML support
 Plug 'lervag/vimtex'			        " LATEX support
 Plug 'plasticboy/vim-markdown'          " Markdown support
+Plug 'JuliaEditorSupport/julia-vim'
 
 " writing
 Plug 'rhysd/vim-grammarous'             " grammar check with LanguageTool
@@ -66,7 +74,7 @@ call plug#end()
 " colorscheme
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:alduin_Shout_Become_Ethereal = 1
-colorscheme spacecamp 
+colorscheme bentastic
 
 set t_Co=256
 let g:python_highlight_all = 1
@@ -85,12 +93,12 @@ set smartindent
 " UI config
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set number
-" set relativenumber
+set relativenumber
 filetype indent on			            " load filetype=epecific indent files
 filetype plugin on			            " load filetype specific plugin files
 set showmatch				            " highlight matching [{()}]
 set laststatus=2			            " show status line at bottom of screen
-set noerrorbells visualbell t_vb=	    " noises are annoying		
+set noerrorbells visualbell t_vb=	    " noises are annoying
 set scrolloff=12
 set ttyfast
 
@@ -104,18 +112,17 @@ nnoremap <C-H> <C-W><C-H>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set backspace=indent,eol,start		    " backspace behaves as expected
 " no Ex mode nonsense on Q
-nmap Q <Nop>				
 set re=1				                " not sure what this does
 
 " searching
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set incsearch				            " search as characters as entered	
-set hlsearch
-set ignorecase				            " ignores case sensitive	
-set smartcase				            " ... unless uppercase is entered	
+set incsearch				            " search as characters as entered
+set nohlsearch
+set ignorecase				            " ignores case sensitive
+set smartcase				            " ... unless uppercase is entered
 
 " turn off search highlight
-vnoremap <C-h> :nohlsearch<cr>		
+vnoremap <C-h> :nohlsearch<cr>
 nnoremap <C-h> :nohlsearch<cr>
 set wildignore+=*/.git/*,*/tmp/,*.swp	" ignore files for completion
 
@@ -143,11 +150,11 @@ set undodir=~/.vim/undodir
 " Folding
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set foldenable				            " enable folding
-set foldlevelstart=10			        " opens most folds by default
+set foldlevelstart=4			        " opens most folds by default
 set foldnestmax=10			            " 10 nexted fold max
 "space opens/closes folds
 nnoremap <space> za
-set foldmethod=indent			        " fold based on indent level	
+set foldmethod=indent			        " fold based on indent level
 " good for python. Other options include (marker, manual, expr, syntax, diff)
 
 
@@ -165,12 +172,12 @@ vnoremap <S-Tab> <
 " =============================================================================
 
 " filestype specific full line comment
-function! CommentRow() 
+function! CommentRow()
 	if &filetype=="php"
 		execute "normal! ^i//  ==========================================================================="
 	elseif &filetype=="py"
 		execute "normal! ^i#  ============================================================================"
-	endif	
+	endif
 endfunction
 
 " toggle between number and relativenumber
@@ -185,25 +192,59 @@ endfunc
 
 function! LightlineFilename()
     return expand('%:t') !=# '' ? @% : '[No Name]'
-endfunction    
+endfunction
 
 " php test expression
-nnoremap <F1> ^iecho "<pre>"; print_r(<esc>A); die();<esc> 
-nnoremap <F8> :call CommentRow()<CR>			
+nnoremap <F1> ^iecho "<pre>"; print_r(<esc>A); die();<esc>
+nnoremap <F8> :call CommentRow()<CR>
 nnoremap <F5> :call ToggleLineNumber()<cr>
 " =============================================================================
 " PLUGIN CONFIG
 " =============================================================================
 
-let g:user_emmet_leader_key=','		    " emmet 
+let g:user_emmet_leader_key=','	    " emmet
 let g:gitgutter_enabled = 1 		    " vim-git-gutter
 let g:SignatureEnabledAtStartup = 1
 let g:tex_flavor = "latex"
 " hardmode
-autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
+" autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
+
+" Argwrap
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <silent> <leader>a :ArgWrap<CR>
+
+" Easy Align
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+" Snippets
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" sad
+
+" ALE
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ale_enabled = 1
+" For quick startup
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_save = 1
+" Set this variable to 1 to fix files when you save them.
+let g:ale_fix_on_save = 1
+let g:ale_fixers = {
+    \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+    \}
+nmap <silent> [a <Plug>(ale_previous_wrap)
+nmap <silent> ]a <Plug>(ale_next_wrap)
+
+" Startify
+let g:startify_bookmarks = [
+            \ { 'c': '~/.julia/dev/TVAR/src/TVAR.jl' },
+            \ { 'i': '~/rchitex/R/textify.R' },
+            \ { 'z': '~/.zshrc' },
+            \ '~/data-science-awesome/README.md']
 
 " NERD tree git
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:NERDTreeGitStatusIndicatorMapCustom = {
                 \ 'Modified'  :'✹',
                 \ 'Staged'    :'✚',
@@ -219,7 +260,7 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
 
 
 " KITE
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " %{kite#statusline()}
 let g:kite_auto_complete=1
 
@@ -228,38 +269,46 @@ nnoremap ,<space> :nohlsearch<CR>
 " LIGHTLINE
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:lightline = {
-    \     'colorscheme': 'wombat', 
+    \     'colorscheme': 'wombat',
     \     'active': {
     \        'left':  [ ['mode', 'paste' ],
     \                   ['gitbranch', 'readonly', 'filename', 'modified' ]],
-    \        'right': [ ['syntastic', 'lineinfo' ],
-    \                   ['percent'] ]
-    \               },
+    \       'right': [ [ 'lineinfo' ],
+	\                  [ 'percent' ],
+	\                  [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok', 'filetype', 'fileencoding'] ]
+    \     },
     \       'component_function': {
     \           'filename': 'LightlineFilename',
-    \           'gitbranch': 'FugitiveHead'
+    \           'gitbranch': 'FugitiveHead',
     \        },
-    \       'component_expand': {
-    \           'syntastic': 'SyntasticStatuslineFlag',
-    \       },
-    \       'component_type': {
-    \           'syntastic': 'error',
     \       }
-    \ }
 
-function! SyntasticCheckHook(errors)
-    call lightline#update()
-endfunction
+let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_infos': 'lightline#ale#infos',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
 
+let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_infos': 'lightline#ale#infos',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
 
-set noshowmode          				
+set noshowmode
 
 " =============================================================================
 " CUSTOM SHORTCUTS
 " =============================================================================
 
-let mapleader=","
+let mapleader="\\"
 inoremap jj <ESC>
+nnoremap <F12> :source $MYVIMRC<cr>
+
 nnoremap <F6> :NERDTreeToggle<CR>
 
 " git gutter
@@ -267,7 +316,7 @@ nmap ghs <Plug>(GitGutterStageHunk)
 nmap ghu <Plug>(GitGutterUndoHunk)
 nmap ghp <Plug>(GitGutterPreviewHunk)
 
- 
+
 " =============================================================================
 " FILETYPE SPECIFIC CUSTOMIZATIONS
 " =============================================================================
@@ -279,10 +328,11 @@ autocmd BufRead *.php set filetype=php
 
 " Latex preferences
 au BufNewFile,BufRead *.tex,*.md
-	\ set spell
+	\ set spell |
+    \ set textwidth=120
 
 " R preferences
-au BufNewFile,BufRead *.R,*.md,*.html,*.css
+au BufNewFile,BufRead *.R,*.html,*.css
 	\ set tabstop=2 |
 	\ set softtabstop=2 |
 	\ set textwidth=79
@@ -292,3 +342,11 @@ if has("autocmd")
   " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
   au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
+
+
+" =============================================================================
+" MY MAPPINGS
+" =============================================================================
+" appends a semi colon at the end of line (thx Vim the hard way)
+nnoremap <leader>; mqA;<esc>`q"
+

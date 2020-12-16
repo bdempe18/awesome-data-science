@@ -97,7 +97,6 @@ alias fuck='sudo !!'
 alias aim='cd ~/Documents/Professional/alz/'
 alias alzimpact='cd ~/alzimpact'
 alias ds='cd ~/data-science-awesome'
-export PATH="/home/ben/julia:$PATH"
 export PATH=$PATH:/home/ben/bin/
 
 
