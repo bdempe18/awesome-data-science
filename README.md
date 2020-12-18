@@ -7,6 +7,7 @@ Library of statistics, data science, and programming resources as well as local 
  - [R Tidyverse](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Tidyverse+Cheat+Sheet.pdf)
  - [Julia](https://juliadocs.github.io/Julia-Cheat-Sheet/)
  - [Regex](http://web.mit.edu/hackl/www/lab/turkshop/slides/regex-cheatsheet.pdf)
+ - [GIT](https://education.github.com/git-cheat-sheet-education.pdf)    
 
 ### Vim
   - [Vim the hard way](https://learnvimscriptthehardway.stevelosh.com/)
@@ -27,3 +28,8 @@ Library of statistics, data science, and programming resources as well as local 
 
 ### R
   - [Advanced R by Hadley Wickham](https://adv-r.hadley.nz/)
+
+### Python
+  - [A Primer on Scientific Programming by Hans Petter
+      Langtangen](https://wiki.physics.udel.edu/wiki_qttg/images/6/62/PETTER%3Dprimer_on_scientific_programming_with_python.pdf)
+  - [Think Complexity by Allen B. Downey](http://greenteapress.com/complexity/)

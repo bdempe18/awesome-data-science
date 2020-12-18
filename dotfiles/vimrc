@@ -106,7 +106,7 @@ set ttyfast
 nnoremap <C-K> <C-W><C-J>
 nnoremap <C-I> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+nnoremap <C-P> <C-W><C-H>
 
 " misc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -349,4 +349,3 @@ endif
 " =============================================================================
 " appends a semi colon at the end of line (thx Vim the hard way)
 nnoremap <leader>; mqA;<esc>`q"
-

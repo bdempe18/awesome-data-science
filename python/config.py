@@ -12,3 +12,4 @@ def install(package):
 
 
 map(install, PACKAGES)
+print("Go to https://www.kite.com/download/ to download kite")
