@@ -1,5 +1,7 @@
 # data-science-awesome
-Library of statistics, data science, and programming resources as well as local config files
+This repository is a library of statistics, data science, and general statistical programming resources as well as config files. Specialized resources and learning documents can be found in the respective folders while general resources are located in this markdown file.
+
+If you have resources or additionsto make, feel free to make a pull request!
 
 ### Cheat Sheets
  - [Bootstrap](https://hackerthemes.com/bootstrap-cheatsheet/)
