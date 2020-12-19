@@ -1,0 +1,56 @@
+#!/bin/bash
+
+verify_dir() {
+	if [ ! -d ~/.cheat ]; then
+		mkdir -p ~/.cheat
+	fi;	
+
+	if [ ! -f  ~/.cheat/.resources.csv ]; then
+		touch ~/.cheat/.resources.csv
+	fi;	
+
+}
+
+function recall() {
+	name=$1
+
+	OIFS=$IFS
+	IFS=','
+	declare -A resources
+	while read key value
+	do
+		resources+=( ["$key"]="$value" )
+	done < ~/.cheat/.resources.csv
+	IFS=$OIFS
+
+	if [ ! -f ~/.cheat/${name}.pdf ]; then
+		cd ~/.cheat
+		url=${resources["${name}"]}
+		curl -o "${name}.pdf" -sLO "${url}" 
+		cd -
+	fi;	
+	xdg-open ~/.cheat/${name}.pdf
+}	
+
+function add_resource() {
+	addname=$1
+	url=$2
+	echo "${addname},${url}" >> ~/.cheat/.resources.csv
+
+}
+
+verify_dir
+while getopts n:a:u: flag; do
+	case "${flag}" in
+		n) recall $OPTARG;;
+		a) addname=$OPTARG;;
+		u) url=$OPTARG;;
+		\? ) echo "Invalid option $OPTARG" 1>$2;;
+		: ) echo "Invalid option: $OPTARG requires an argument" 1>$2
+	esac
+done
+shift $((OPTIND -1))
+if [[ -z $a && -z $u ]]; then
+	add_resource $addname $url
+fi;	
+exit 0
