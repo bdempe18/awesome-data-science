@@ -1,0 +1,523 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     20211,        515]
+NotebookOptionsPosition[     19540,        494]
+NotebookOutlinePosition[     19877,        509]
+CellTagsIndexPosition[     19834,        506]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Univariate Regression Simulation", "Section",
+ CellChangeTimes->{{3.772278072501924*^9, 
+  3.77227807887236*^9}},ExpressionUUID->"221be351-b414-42c4-a51f-\
+1258e7d10080"],
+
+Cell[TextData[{
+ "Imagine you have a dataset consisting of ",
+ Cell[BoxData[
+  FormBox["n", TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "d494b2b1-ff46-4c12-a0a8-bf48dd699916"],
+ " ordered-pairs ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"(", 
+    RowBox[{"x", ",", "y"}], ")"}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "660547f2-e48b-4b8c-92c2-e7284dc2931b"],
+ " that you can plot on a two-dimensional Cartesian plane. Each axis \
+represents some variable of interest. For example, a study may ask ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"n", " "}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "6c8015bb-cdd6-4771-8c28-cbf9b9815411"],
+ "number of students for their GPA (y-axis) and the amount of time they spend \
+studying a week (x axis). After plotting all ",
+ Cell[BoxData[
+  FormBox["n", TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "5aee5dac-1892-4b9c-8b01-a51e762e2d02"],
+ " observations, we would like to state a generalized pattern. We know that \
+some students are naturally clever and have a high GPA without studying and \
+some students struggle to earn a high GPA even though they study constantly. \
+However, we want to show that, on average, studying more is correlated with a \
+higher GPA.\n\nOne way to show this correlation is with a ",
+ StyleBox["univariate ",
+  FontSlant->"Italic"],
+ "regression. Given the ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"n", " "}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "ab5a4fe7-2869-4c39-896f-40d339406807"],
+ "observations, we could draw a straight line through the cluster of data. If \
+we agree that the line we drew fits the cluster of data points well and has a \
+positive slope, then  on average and increase in x (amount of time studying) \
+leads to an increase in y (GPA). \n\nOur theoretical line must satisfy the \
+mathematical formula for a line, ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"y", "=", 
+    RowBox[{"mx", "+", "b"}]}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "de8f951b-23ac-48f7-923b-af9f7aff43f7"],
+ " for every ordered pair ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"(", 
+    RowBox[{
+     SubscriptBox["x", "i"], ",", 
+     SubscriptBox["y", "i"]}], ")"}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "aba93bd5-1e46-45af-aebc-c095d5754803"],
+ ". The goal of regression is to estimate the parameters of the model, which \
+is this case is the set ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"\[Theta]", "=", 
+    RowBox[{"(", 
+     RowBox[{"m", ",", "b"}], ")"}]}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "878f252d-586d-45d0-a48c-47b3e4611240"],
+ ", that minimize some evaluation metric that measures the goodness of fit. \n\
+\nLets call all the points on our theoretical line ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    OverscriptBox["y", "^"], "=", 
+    RowBox[{"mx", "+", "b"}]}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "aa2ca5c1-b40b-46f6-93b8-5cb05ec740d0"],
+ ". For every ",
+ Cell[BoxData[
+  FormBox["x", TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "f32d9310-58d9-4611-b4ff-8b52e293b07c"],
+ " value, we know have an estimated ",
+ Cell[BoxData[
+  FormBox[
+   OverscriptBox["y", "^"], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "c722749d-6869-4ced-8247-d4d661fa0793"],
+ " as well as an observed ",
+ Cell[BoxData[
+  FormBox[
+   OverscriptBox["y", "_"], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "921a92ee-309f-4c0f-8992-e6fc10ae38f2"],
+ ". The best theoretical line would be one in which the difference between \
+the estimated and observed y is zero, ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     OverscriptBox["y", "^"], "-", 
+     OverscriptBox["y", "_"]}], "=", "0"}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "e03d6ba8-a50c-48e2-b370-3a9c5ed5a065"],
+ ". Outside of specialized deterministic processes, we rarely see such \
+situation. Rather, we want to estimate parameters that ",
+ StyleBox["minimize",
+  FontSlant->"Italic"],
+ " the difference between the estimated and observed y. Our evaluation metric \
+in this case is to select a ",
+ Cell[BoxData[
+  FormBox["\[Theta]", TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "20703a3d-7563-4fbe-9d4a-d76f8c6bb351"],
+ " that minimizes ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    OverscriptBox["y", "^"], "-", 
+    OverscriptBox["y", "_"]}], TraditionalForm]],ExpressionUUID->
+  "b3eff621-ea71-455d-ae14-0ce2c01535f9"],
+ ".\n\nAn astute reader may notice that our evaluation metric can be \
+satisfied by choosing a ",
+ Cell[BoxData[
+  FormBox["\[Theta]", TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "fed0a04f-008f-4776-8082-b2afb4549b15"],
+ " that dramatically undershoots the data so that the difference between \
+estimated and observed is as negative as possible. This leads us to place an \
+additional condition. We want to select parameters that minimize the absolute \
+difference between ",
+ Cell[BoxData[
+  FormBox[
+   OverscriptBox["y", "^"], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "f752878f-567b-4c44-af88-48f6bfe6be26"],
+ " and ",
+ Cell[BoxData[
+  FormBox[
+   OverscriptBox["y", "_"], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "d85abf3a-4fb6-4560-a514-130693edf034"],
+ ", which can be achieved by squaring the difference. Minimizing the squared \
+difference between estimated and observed y-values also adds an additional \
+penalty for larger gaps.\n\nThis process is called the sum of squared errors \
+(SSE). For every ordered pair in the data set calculate the squared \
+difference between the observed and estimated values and add these up. \
+Mathematically, this is formulated as ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"SSE", "=", 
+    RowBox[{
+     UnderoverscriptBox["\[Sum]", 
+      RowBox[{"i", "=", "1"}], "n"], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{
+        SubscriptBox[
+         OverscriptBox["y", "_"], "i"], "-", 
+        SubscriptBox[
+         OverscriptBox["y", "^"], "i"]}], ")"}], "2"]}]}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "15f57155-41c4-4e26-a797-124c04c077f1"],
+ " where ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox[
+     OverscriptBox["y", "^"], "i"], "=", 
+    RowBox[{"\[Alpha]", "+", 
+     SubscriptBox["\[Beta]x", "i"]}]}], TraditionalForm]],
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "cfd75358-7180-4805-b264-c373e2997ba5"],
+ ". The parameters here are ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"\[Theta]", "=", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"\[Alpha]", ",", "\[Beta]"}], ")"}], "."}]}], TraditionalForm]],
+  
+  FormatType->"TraditionalForm",ExpressionUUID->
+  "a8805557-1942-4a22-829f-cabf385bf762"],
+ " \n\nThe following situation demonstrates the validity of this metric. The \
+goal of the simulation is to select an intercept and slope term that best \
+fits the data. The calculated SSE is listed at the bottom of the screen."
+}], "Text",
+ InitializationCell->True,
+ CellChangeTimes->{{3.7722782081023483`*^9, 3.7722782679702682`*^9}, {
+  3.7722783080389357`*^9, 3.772278394447091*^9}, {3.772278439459399*^9, 
+  3.7722791977971888`*^9}, {3.772279272021645*^9, 3.772279892087631*^9}, {
+  3.772280013021865*^9, 
+  3.772280207495255*^9}},ExpressionUUID->"5aa1e326-30b8-47ea-a0b0-\
+4c37b02718a1"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Artifical", " ", "data", " ", "is", " ", "randomly", " ", "jittered", " ",
+     "around", " ", "a", " ", "line"}], " ", "*)"}]}], "\[IndentingNewLine]", 
+
+ RowBox[{
+  RowBox[{
+   RowBox[{"data", " ", "=", " ", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"i", ",", 
+        RowBox[{"i", "+", 
+         RowBox[{"RandomReal", "[", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "10"}], "}"}], "]"}]}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "1", ",", "30"}], "}"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"linear", " ", "function"}], " ", "*)"}]}], "\[IndentingNewLine]", 
+
+ RowBox[{
+  RowBox[{
+   RowBox[{"line", " ", "=", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Alpha]", ",", "\[Beta]", ",", "x"}], "}"}], "\[Function]", 
+     " ", 
+     RowBox[{"\[Alpha]", "+", 
+      RowBox[{"\[Beta]", " ", "x"}]}]}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"dataPlot", "=", 
+     RowBox[{"ListPlot", "[", "data", "]"}]}], ";", "\[IndentingNewLine]", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+     "x", " ", "and", " ", "y", " ", "data", " ", "is", " ", "extracted", " ",
+       "from", " ", "the", " ", "list", " ", "of", " ", "tuples"}], " ", 
+     "*)"}], "\[IndentingNewLine]", 
+    RowBox[{"xs", "=", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"First", "[", "#", "]"}], "&"}], "/@", "data"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"ys", "=", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Last", "[", "#", "]"}], "&"}], "/@", "data"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+      RowBox[{"The", " ", "predicted", " ", "y", " ", "values"}], ",", " ", 
+      OverscriptBox["y", "^"], ",", " ", 
+      RowBox[{
+      "is", " ", "calculated", " ", "by", " ", "the", " ", "user", " ", 
+       "selected", " ", "parameterse", " ", "\[Alpha]", " ", "and", " ", 
+       "\[Beta]", " ", "mapped", " ", "over", " ", "all", " ", "x", " ", 
+       "values"}]}], "*)"}], "\[IndentingNewLine]", 
+    RowBox[{"preds", "=", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"line", "[", 
+        RowBox[{"\[Alpha]", ",", "\[Beta]", ",", "#"}], "]"}], "&"}], "/@", 
+      "xs"}]}], ";", "\[IndentingNewLine]", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+     "The", " ", "sum", " ", "of", " ", "standard", " ", "errors", " ", "is", 
+      " ", "calculated", " ", "as", " ", 
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"i", "=", "1"}], "n"], 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          SubscriptBox["y", "i"], "-", 
+          SubscriptBox[
+           OverscriptBox["y", "^"], "i"]}], ")"}], "2"]}]}], " ", "*)"}], 
+    "\[IndentingNewLine]", 
+    RowBox[{"sse", "=", 
+     RowBox[{"Total", "[", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"ys", "-", "preds"}], ")"}], "2"], "]"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"mod", "=", 
+     RowBox[{"LinearModelFit", "[", 
+      RowBox[{"data", ",", "x", ",", "x"}], "]"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Column", "[", 
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Show", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Plot", "[", 
+          RowBox[{
+           RowBox[{"line", "[", 
+            RowBox[{"\[Alpha]", ",", "\[Beta]", ",", "x"}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"x", ",", "0", ",", "30"}], "}"}], ",", " ", 
+           RowBox[{"PlotRange", "\[Rule]", 
+            RowBox[{"{", 
+             RowBox[{"0", ",", "50"}], "}"}]}], ",", " ", 
+           RowBox[{"ImageSize", "\[Rule]", "Large"}], ",", 
+           RowBox[{"PlotStyle", "\[Rule]", 
+            RowBox[{"GrayLevel", "[", ".3", "]"}]}], ",", 
+           "\[IndentingNewLine]", 
+           RowBox[{
+           "PlotLabel", "\[Rule]", 
+            "\"\<Univariate regression estimation\>\""}], ",", 
+           "\[IndentingNewLine]", 
+           RowBox[{"(*", " ", 
+            RowBox[{"Plots", " ", "red", " ", "residual", " ", "lines"}], " ",
+             "*)"}], "\[IndentingNewLine]", 
+           RowBox[{"Epilog", "\[Rule]", 
+            RowBox[{"{", 
+             RowBox[{"Red", ",", 
+              RowBox[{"Line", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"line", "[", 
+                    RowBox[{"\[Alpha]", ",", "\[Beta]", ",", "#"}], "]"}]}], 
+                    "}"}], ",", 
+                   RowBox[{"{", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"ys", "[", 
+                    RowBox[{"[", "#", "]"}], "]"}]}], "}"}]}], "}"}], "&"}], "/@",
+                 "xs"}], "]"}]}], "}"}]}]}], "]"}], ",", 
+         "\[IndentingNewLine]", "dataPlot", ",", "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{"Selectively", " ", "plots", " ", 
+            RowBox[{"the", " ", "'"}], 
+            RowBox[{"correct", "'"}], " ", "linear", " ", 
+            RowBox[{"model", ".", " ", "If"}], " ", "chkbox", " ", "is", " ", 
+            "unselected"}], ",", " ", 
+           RowBox[{
+           "its", " ", "bool", " ", "value", " ", "is", " ", "0", " ", "and", 
+            " ", "opacity", " ", "is", " ", "then", " ", "0"}]}], " ", "*)"}],
+          "\[IndentingNewLine]", 
+         RowBox[{"Plot", "[", 
+          RowBox[{
+           RowBox[{"mod", "[", "x", "]"}], ",", " ", 
+           RowBox[{"{", 
+            RowBox[{"x", ",", "0", ",", "30"}], "}"}], ",", " ", 
+           RowBox[{"PlotStyle", "\[Rule]", 
+            RowBox[{"{", 
+             RowBox[{"Gray", ",", " ", 
+              RowBox[{"Opacity", "[", 
+               RowBox[{"0.75", " ", "*", " ", 
+                RowBox[{"Boole", "[", "lm", "]"}]}], "]"}]}], "}"}]}]}], 
+          "]"}]}], "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Grid", "[", 
+        RowBox[{"{", 
+         RowBox[{"{", 
+          RowBox[{"\"\<SSE\>\"", ",", "sse"}], "}"}], "}"}], "]"}]}], 
+      "\[IndentingNewLine]", "}"}], "]"}]}], ",", "\[IndentingNewLine]", 
+   RowBox[{"Style", "[", 
+    RowBox[{"\"\<Parameters\>\"", ",", "12", ",", " ", "Bold"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Alpha]", ",", "0", ",", "\"\<Intercept\>\""}], "}"}], ",", 
+     "0", ",", "20"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Beta]", ",", "0.75", ",", "\"\<Slope\>\""}], "}"}], ",", 
+     RowBox[{"-", "5"}], ",", "5"}], "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"lm", ",", "False", ",", " ", "\"\<Show OLS\>\""}], "}"}], ",", 
+     
+     RowBox[{"{", 
+      RowBox[{"True", ",", " ", "False"}], "}"}]}], "}"}], ",", 
+   "\[IndentingNewLine]", " ", 
+   RowBox[{"ControlPlacement", "\[Rule]", "Left"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.772278080273334*^9, 3.77227808137812*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"3fdbe9a7-cfa9-49fa-8eb3-a2bb7186e01d"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`lm$$ = True, $CellContext`\[Alpha]$$ = 
+    4.75, $CellContext`\[Beta]$$ = 1.38, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{
+      Hold[
+       Style["Parameters", 12, Bold]], Manipulate`Dump`ThisIsNotAControl}, {{
+       Hold[$CellContext`\[Alpha]$$], 0, "Intercept"}, 0, 20}, {{
+       Hold[$CellContext`\[Beta]$$], 0.75, "Slope"}, -5, 5}, {{
+       Hold[$CellContext`lm$$], False, "Show OLS"}, {True, False}}}, 
+    Typeset`size$$ = {576., {203.5, 210.5}}, Typeset`update$$ = 0, 
+    Typeset`initDone$$, Typeset`skipInitDone$$ = 
+    True, $CellContext`\[Alpha]$2611$$ = 0, $CellContext`\[Beta]$2612$$ = 
+    0, $CellContext`lm$2613$$ = "Button 1"}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, 
+      "Variables" :> {$CellContext`lm$$ = False, $CellContext`\[Alpha]$$ = 
+        0, $CellContext`\[Beta]$$ = 0.75}, "ControllerVariables" :> {
+        Hold[$CellContext`\[Alpha]$$, $CellContext`\[Alpha]$2611$$, 0], 
+        Hold[$CellContext`\[Beta]$$, $CellContext`\[Beta]$2612$$, 0], 
+        Hold[$CellContext`lm$$, $CellContext`lm$2613$$, False]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, 
+      "Body" :> ($CellContext`dataPlot = 
+        ListPlot[$CellContext`data]; $CellContext`xs = 
+        Map[First[#]& , $CellContext`data]; $CellContext`ys = 
+        Map[Last[#]& , $CellContext`data]; $CellContext`preds = 
+        Map[$CellContext`line[$CellContext`\[Alpha]$$, \
+$CellContext`\[Beta]$$, #]& , $CellContext`xs]; $CellContext`sse = 
+        Total[($CellContext`ys - $CellContext`preds)^2]; $CellContext`mod = 
+        LinearModelFit[$CellContext`data, $CellContext`x, $CellContext`x]; 
+       Column[{
+          Show[
+           Plot[
+            $CellContext`line[$CellContext`\[Alpha]$$, \
+$CellContext`\[Beta]$$, $CellContext`x], {$CellContext`x, 0, 30}, 
+            PlotRange -> {0, 50}, ImageSize -> Large, PlotStyle -> 
+            GrayLevel[0.3], PlotLabel -> "Univariate regression estimation", 
+            Epilog -> {Red, 
+              Line[
+               Map[{{#, 
+                  $CellContext`line[$CellContext`\[Alpha]$$, $CellContext`\
+\[Beta]$$, #]}, {#, 
+                  
+                  Part[$CellContext`ys, #]}}& , $CellContext`xs]]}], \
+$CellContext`dataPlot, 
+           Plot[
+            $CellContext`mod[$CellContext`x], {$CellContext`x, 0, 30}, 
+            PlotStyle -> {Gray, 
+              Opacity[0.75 Boole[$CellContext`lm$$]]}]], 
+          Grid[{{"SSE", $CellContext`sse}}]}]), "Specifications" :> {
+        Style[
+        "Parameters", 12, Bold], {{$CellContext`\[Alpha]$$, 0, "Intercept"}, 
+         0, 20}, {{$CellContext`\[Beta]$$, 0.75, "Slope"}, -5, 
+         5}, {{$CellContext`lm$$, False, "Show OLS"}, {True, False}}}, 
+      "Options" :> {ControlPlacement -> Left}, "DefaultOptions" :> {}],
+     ImageSizeCache->{886., {235., 242.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.772278082941639*^9, 3.772280209805051*^9, {3.772892183291163*^9, 
+   3.7728922121291122`*^9}},
+ CellLabel->"Out[4]=",ExpressionUUID->"72151a24-454f-4a3f-a79d-8eab4be2b2ec"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1024, 731},
+WindowMargins->{{Automatic, -1024}, {0, Automatic}},
+FrontEndVersion->"12.0 for Linux x86 (64-bit) (April 8, 2019)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 176, 3, 68, "Section",ExpressionUUID->"221be351-b414-42c4-a51f-1258e7d10080"],
+Cell[759, 27, 7532, 193, 734, "Text",ExpressionUUID->"5aa1e326-30b8-47ea-a0b0-4c37b02718a1",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[8316, 224, 7333, 188, 770, "Input",ExpressionUUID->"3fdbe9a7-cfa9-49fa-8eb3-a2bb7186e01d"],
+Cell[15652, 414, 3860, 76, 496, "Output",ExpressionUUID->"72151a24-454f-4a3f-a79d-8eab4be2b2ec"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

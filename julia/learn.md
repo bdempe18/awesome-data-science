@@ -3,3 +3,6 @@
 
 ### Style guide
   - [Julia](https://docs.julialang.org/en/v1/manual/style-guide/index.html)
+
+### Cheat Sheets
+ - [Julia](https://juliadocs.github.io/Julia-Cheat-Sheet/)
