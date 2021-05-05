@@ -13,3 +13,6 @@
   - [Numpy](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Numpy_Python_Cheat_Sheet.pdf)
   - [Pandas](http://datacamp-community-prod.s3.amazonaws.com/dbed353d-2757-4617-8206-8767ab379ab3)
 
+### Blogs
+  - [Syntactic Sugar by Brett Cannon](https://snarky.ca/)
+

@@ -91,13 +91,22 @@ fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias vrc='vi ~/data-science-awesome/dotfiles/vimrc'
+alias brc='vi ~/data-science-awesome/dotfiles/bashrc'
 alias lsd='ls -d */'
 alias hiss='anaconda-navigator'
-alias fuck='sudo !!'
+alias fuck='sudo $(history -p !!)'
 alias aim='cd ~/Documents/Professional/alz/'
 alias alzimpact='cd ~/alzimpact'
 alias ds='cd ~/data-science-awesome'
+alias run='python manage.py runserver'
+alias activate='source venv/bin/activate'
+
+# source local bash profile
+source ~/.local_bash
+
 export PATH=$PATH:/home/ben/bin/
+export PATH=$PATH:/opt/firefox
 
 
 # Add an "alert" alias for long running commands.  Use like so:
@@ -139,4 +148,3 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
-

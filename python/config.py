@@ -5,11 +5,14 @@
 import subprocess
 import sys
 
-PACKAGES = ["numpy", "matplotlib", "pandas"]
+# PACKAGES = ["numpy", "matplotlib", "pandas"]
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 
-map(install, PACKAGES)
+# map(install, PACKAGES)
+subprocess.check_call(sys.executable, '-r', 'pip', 'install',
+                      'python/requirements.py')
+
 print("Go to https://www.kite.com/download/ to download kite")

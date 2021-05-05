@@ -15,6 +15,7 @@ iabbrev clog console.log
 call plug#begin('~/.vim/plugged')
 " Color schemes are GUI
 Plug  '~/data-science-awesome/bentastic'
+Plug 'NLKNguyen/papercolor-theme'
 Plug 'crusoexia/vim-monokai'
 Plug 'jaredgorski/spacecamp'
 Plug 'itchyny/lightline.vim'
@@ -23,6 +24,11 @@ Plug 'AlessandroYorba/Alduin'
 
 " search
 Plug 'haya14busa/incsearch.vim'		    " better incremental search
+
+" motion
+Plug 'easymotion/vim-easymotion'
+Plug 'haya14busa/incsearch-easymotion.vim'
+Plug 'wikitopian/hardmode'              " No more crutches!
 
 " Misc
 Plug 'terryma/vim-multiple-cursors'
@@ -53,6 +59,7 @@ Plug 'w0rp/ale'                        " Linting engine
 Plug 'maximbaz/lightline-ale'          " Lightline + Ale
 Plug 'mechatroner/rainbow_csv'         	" CSV color coding
 Plug 'vim-python/python-syntax'
+Plug 'trialsolution/gamsvim'            " GAMS
 Plug 'stephpy/vim-yaml'			        " YAML support
 Plug 'lervag/vimtex'			        " LATEX support
 Plug 'plasticboy/vim-markdown'          " Markdown support
@@ -64,8 +71,12 @@ Plug 'junegunn/limelight.vim'           " focus on current paragraph
 
 " general utils
 Plug 'Wakatime/vim-wakatime'            " Productivity tracker
-Plug 'wikitopian/hardmode'              " No more crutches!
+
+" Snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 call plug#end()
+
 
 " =============================================================================
 " EDITOR SETTINGS
@@ -105,8 +116,11 @@ set ttyfast
 " Split screen indentions
 nnoremap <C-K> <C-W><C-J>
 nnoremap <C-I> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-P> <C-W><C-H>
+nnoremap <C-P> <C-W><C-L>
+nnoremap <C-L> <C-W><C-H>
+
+" Case insensitive save
+nnoremap :W :update<cr>
 
 " misc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -220,7 +234,45 @@ nmap ga <Plug>(EasyAlign)
 
 " Snippets
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" sad
+let g:UltiSnipsExpandTrigger="<tab>"
+" list all snippets for current filetype
+let g:UltiSnipsListSnippets="<c-l>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardtrigger="<c-z>"
+let g:UltiSnipsSnippetDirectories=['~/data-science-awesome/snippets']
+
+
+" Easymotion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use uppercase target labels and type as a lower case
+let g:EasyMotion_use_upper = 1
+"let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
+" Turn on case-insensitive feature
+let g:EasyMotion_smartcase = 1
+map <Leader> <Plug>(easymotion-prefix)
+map <Leader>h <Plug>(easymotion-linebackward)
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+map <Leader>l <Plug>(easymotion-lineforward)
+
+" <Leader>f{char} to move to {char}
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+" vim-sneak behaviour through easymotio
+map <Leader>t <Plug>(easymotion-t2)
+nmap <Leader>t <Plug>(easymotion-overwin-t2)
+map <Leader>s <Plug>(easymotion-f2)
+nmap <Leader>s <Plug>(easymotion-overwin-f2)
+
+" incsearch
+map / <Plug>(incsearch-forward)
+map ? <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+" incsearch-easymotion
+map z/ <Plug>(incsearch-easymotion-/)
+map z? <Plug>(incsearch-easymotion-?)
+map zg/ <Plug>(incsearch-easymotion-stay)
 
 " ALE
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -262,9 +314,13 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
 " KITE
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " %{kite#statusline()}
+let g:kite_supported_languages = ['*']
 let g:kite_auto_complete=1
 
 nnoremap ,<space> :nohlsearch<CR>
+
+
+
 
 " LIGHTLINE
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -335,7 +391,8 @@ au BufNewFile,BufRead *.tex,*.md
 au BufNewFile,BufRead *.R,*.html,*.css
 	\ set tabstop=2 |
 	\ set softtabstop=2 |
-	\ set textwidth=79
+    \ set shiftwidth=2 |
+	\ set textwidth=250
 
 " jump to last location on opening file
 if has("autocmd")
@@ -343,9 +400,18 @@ if has("autocmd")
   au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
+au BufNewFile,BufRead *.gms	 setf gams
 
 " =============================================================================
 " MY MAPPINGS
 " =============================================================================
 " appends a semi colon at the end of line (thx Vim the hard way)
 nnoremap <leader>; mqA;<esc>`q"
+
+" =============================================================================
+" LOCAL CONFIG
+" =============================================================================
+let $LOCALFILE = expand("~/.vimrc_local")
+if filereadable($LOCALFILE)
+    source $LOCALFILE
+endif
