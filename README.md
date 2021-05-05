@@ -12,3 +12,6 @@ If you have resources or additions to make, feel free to make a pull request!
   - [Imperative vs Declarative Programming](https://ui.dev/imperative-vs-declarative-programming/)
   - [O'Reilly's Function Programming in Python by David
   Mertz](https://pepa.holla.cz/wp-content/uploads/2016/10/functional-programming-python.pdf)
+  
+### Web Development
+  - [Quick HTML with Emmet](https://docs.emmet.io/cheat-sheet/)
