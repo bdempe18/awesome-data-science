@@ -9,6 +9,7 @@ iabbrev @g bdempe18
 " shortcuts
 iabbrev clog console.log
 
+
 " =============================================================================
 " PLUGINS
 " =============================================================================
@@ -21,6 +22,11 @@ Plug 'jaredgorski/spacecamp'
 Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'AlessandroYorba/Alduin'
+Plug 'voldikss/vim-floaterm'
+Plug 'tpope/vim-dadbod'
+Plug 'tpope/vim-rhubarb'
+Plug 'ekalinin/Dockerfile.vim'
+Plug 'adrienverge/vim-python-logging'
 
 " search
 Plug 'haya14busa/incsearch.vim'		    " better incremental search
@@ -29,11 +35,17 @@ Plug 'haya14busa/incsearch.vim'		    " better incremental search
 Plug 'easymotion/vim-easymotion'
 Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'wikitopian/hardmode'              " No more crutches!
+Plug 'junegunn/fzf.vim'                 " Fuzzy file search
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+" Plug 'andymass/vim-matchup'             " Block navigation
 
 " Misc
 Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-surround'
 Plug 'vim-scripts/indentpython.vim'
+Plug 'pangloss/vim-javascript'          " javascript syntax highlighting
+Plug 'yuezk/vim-js'
+Plug 'maxmellon/vim-jsx-pretty'
 Plug 'vim-syntastic/syntastic'
 Plug 'herringtondarkholme/yats.vim'
 Plug 'mattn/emmet-vim'
@@ -46,6 +58,8 @@ Plug 'foosoft/vim-argwrap'              " func arg alignment
 Plug 'junegunn/vim-easy-align'          " alignment
 Plug 'godlygeek/tabular'                " align on char
 Plug 'tpope/vim-abolish'                " change case/robust abbrevs
+Plug 'jiangmiao/auto-pairs'             " insert braces in pairs
+Plug 'Yggdroot/indentLine'              " indent lines
 
 " git
 Plug 'airblade/vim-gitgutter'		    " Git gutter
@@ -82,14 +96,71 @@ call plug#end()
 " EDITOR SETTINGS
 " =============================================================================
 
+"" LEADER
+let mapleader=" "
+
 " colorscheme
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:alduin_Shout_Become_Ethereal = 1
-colorscheme bentastic
+colorscheme monokai
 
 set t_Co=256
 let g:python_highlight_all = 1
 syntax on
+
+" databases
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:dadbods = []
+let db = {
+            \"name": "Alzimpact local",
+            \"url": "mysql://root@localhost/alz_impact"
+            \}
+call add(g:dadbods, db)
+
+let db = {
+            \"name": "Sample",
+            \"url": "mysql://root@localhost/sample_db"
+            \}
+call add(g:dadbods, db)
+
+let g:db = g:dadbods[0].url
+
+command! DBSelect :call popup_menu(map(copy(g:dadbods), {k,v -> v.name}), {
+			\"callback": 'DBSelected'
+			\})
+
+func! DBSelected(id, result)
+	if a:result != -1
+		let b:db = g:dadbods[a:result-1].url
+		echomsg 'DB ' . g:dadbods[a:result-1].name . ' is selected.'
+	endif
+endfunc
+
+"" operator mapping
+func! DBExe(...)
+	if !a:0
+		let &operatorfunc = matchstr(expand('<sfile>'), '[^. ]*$')
+		return 'g@'
+	endif
+	let sel_save = &selection
+	let &selection = "inclusive"
+	let reg_save = @@
+
+	if a:1 == 'char'	" Invoked from Visual mode, use gv command.
+		silent exe 'normal! gvy'
+	elseif a:1 == 'line'
+		silent exe "normal! '[V']y"
+	else
+		silent exe 'normal! `[v`]y'
+	endif
+
+	execute "DB " . @@
+
+	let &selection = sel_save
+	let @@ = reg_save
+endfunc
+
+nnoremap <leader>db <Plug>(DBExe)
 
 " spaces and tabs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -100,6 +171,7 @@ set textwidth=79
 set expandtab
 set autoindent
 set smartindent
+set nowrap
 
 " UI config
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -151,7 +223,7 @@ hi SpellRare ctermfg=green guifg=green
 " adds words that should be highlighted when commented
 augroup vimrc_todo
     au!
-    au Syntax * syn match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|HACK)/
+    au Syntax * syn match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|HACK|IMPLEMENT)/
           \ containedin=.*Comment,vimCommentTitle
 augroup END
 hi def link MyTodo Todo
@@ -164,10 +236,10 @@ set undodir=~/.vim/undodir
 " Folding
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set foldenable				            " enable folding
-set foldlevelstart=4			        " opens most folds by default
+set foldlevelstart=2			        " opens most folds by default
 set foldnestmax=10			            " 10 nexted fold max
 "space opens/closes folds
-nnoremap <space> za
+nnoremap <tab> za
 set foldmethod=indent			        " fold based on indent level
 " good for python. Other options include (marker, manual, expr, syntax, diff)
 
@@ -223,6 +295,8 @@ let g:tex_flavor = "latex"
 " hardmode
 " autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
 
+nnoremap <leader>a vy/<C-R>"<CR>
+
 " Argwrap
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nnoremap <silent> <leader>a :ArgWrap<CR>
@@ -245,7 +319,7 @@ let g:UltiSnipsSnippetDirectories=['~/data-science-awesome/snippets']
 " Easymotion
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use uppercase target labels and type as a lower case
-let g:EasyMotion_use_upper = 1
+" let g:EasyMotion_use_upper = 1
 "let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
 " Turn on case-insensitive feature
 let g:EasyMotion_smartcase = 1
@@ -319,13 +393,29 @@ let g:kite_auto_complete=1
 
 nnoremap ,<space> :nohlsearch<CR>
 
+" Javascript
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:javascript_conceal_function             = "ƒ"
+let g:javascript_conceal_null                 = "ø"
+let g:javascript_conceal_this                 = "@"
+let g:javascript_conceal_return               = "⇚"
+let g:javascript_conceal_undefined            = "¿"
+let g:javascript_conceal_NaN                  = "ℕ"
+let g:javascript_conceal_prototype            = "¶"
+let g:javascript_conceal_static               = "•"
+let g:javascript_conceal_super                = "Ω"
+let g:javascript_conceal_arrow_function       = "⇒"
+let g:javascript_conceal_noarg_arrow_function = "🞅"
+let g:javascript_conceal_underscore_arrow_function = "🞅"
 
-
+set conceallevel=2
+let g:vim_jsx_pretty_colorful_config = 1 " default 0
+hi Conceal ctermfg=109 guifg=#83a598 ctermbg=NONE guibg=NONE
 
 " LIGHTLINE
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:lightline = {
-    \     'colorscheme': 'wombat',
+    \     'colorscheme': 'Tomorrow_Night_Blue',
     \     'active': {
     \        'left':  [ ['mode', 'paste' ],
     \                   ['gitbranch', 'readonly', 'filename', 'modified' ]],
@@ -357,11 +447,45 @@ let g:lightline.component_expand = {
 
 set noshowmode
 
+" FZF
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set rtp+=/usr/local/opt/fzf
+let g:fzf_layout = { 'down': '~40%' }
+nnoremap <silent><leader>z :Files<CR>
+nnoremap <silent><leader>x :Rg<CR>
+
+" Tabularize
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if exists(":Tabularize")
+    nmap <Leader>p :Tabularize /\|<CR>
+endif
+
+" Indentation guides
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:indent_guides_guide_size = 1
+let g:indent_guides_start_level = 2
+
+" Abolish
+" Because Ben can't spell
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Markdown
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:vim_markdown_conceal_code_blocks = 0
+
+" Floating terminala (FLOATERM)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:floaterm_keymap_new = '<F7>'
+let g:floaterm_keymap_toggle = '<F8>'
+hi FloatermBorder guibg=orange guifg=cyan
+hi Floaterm guibg=green
+hi FloatermNC guibg=gray
+nnoremap <leader>t FloatermToggle<CR>
+
 " =============================================================================
 " CUSTOM SHORTCUTS
 " =============================================================================
 
-let mapleader="\\"
 inoremap jj <ESC>
 nnoremap <F12> :source $MYVIMRC<cr>
 
@@ -394,6 +518,12 @@ au BufNewFile,BufRead *.R,*.html,*.css
     \ set shiftwidth=2 |
 	\ set textwidth=250
 
+au BufNewFile,BufRead,BufEnter */views/*.php
+    \ set tabstop=2 |
+    \ set softtabstop=2 |
+    \ set shiftwidth=2 |
+    \ set textwidth=250 |
+
 " jump to last location on opening file
 if has("autocmd")
   " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
@@ -415,3 +545,45 @@ let $LOCALFILE = expand("~/.vimrc_local")
 if filereadable($LOCALFILE)
     source $LOCALFILE
 endif
+
+let g:last_relative_dir = ''
+nnoremap \1 :call RelatedFile ("models.py")<cr>
+nnoremap \2 :call RelatedFile ("views.py")<cr>
+nnoremap \3 :call RelatedFile ("urls.py")<cr>
+nnoremap \4 :call RelatedFile ("admin.py")<cr>
+nnoremap \5 :call RelatedFile ("tests.py")<cr>
+nnoremap \6 :call RelatedFile ( "templates/" )<cr>
+nnoremap \7 :call RelatedFile ( "templatetags/" )<cr>
+nnoremap \8 :call RelatedFile ( "management/" )<cr>
+nnoremap \0 :e settings.py<cr>
+nnoremap \9 :e urls.py<cr>
+
+fun! RelatedFile(file)
+    if filereadable(expand("%:h"). '/models.py') || isdirectory(expand("%:h") . "/templatetags/")
+        exec "edit %:h/" . a:file
+        let g:last_relative_dir = expand("%:h") . '/'
+        return ''
+    endif
+    if g:last_relative_dir != ''
+        exec "edit " . g:last_relative_dir . a:file
+        return ''
+    endif
+    echo "Cant determine where relative file is : " . a:file
+    return ''
+endfun
+
+fun SetAppDir()
+    if filereadable(expand("%:h"). '/models.py') || isdirectory(expand("%:h") . "/templatetags/")
+        let g:last_relative_dir = expand("%:h") . '/'
+        return ''
+    endif
+endfun
+autocmd BufEnter *.py call SetAppDir()
+
+let g:indentLine_enabled = 1
+" let g:indentLine_conceallevel = 2
+" let g:indentLine_color_term = 229
+let g:indentLine_char = '┊'
+let g:indentLine_indentLevel = 10
+let g:indentLine_showFirstIndentLevel = 1
+let g:indentLine_fileType  = ['html', 'php']

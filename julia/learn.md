@@ -6,3 +6,7 @@
 
 ### Cheat Sheets
  - [Julia](https://juliadocs.github.io/Julia-Cheat-Sheet/)
+
+### Efficient Code
+  - [Dispatch Design](http://ucidatascienceinitiative.github.io/IntroToJulia/Html/DispatchDesigns)
+  - [7 Julia Gotchas](http://www.stochasticlifestyle.com/7-julia-gotchas-handle/)
